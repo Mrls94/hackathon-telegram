@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   def detect_provider_class
     @provider_class = "#{params[:provider]}_service".camelcase.constantize
-  rescue => _e
+  rescue StandardError => _e
     Rails.logger.debug("Provider '#{params[:provider]}' not found")
   end
 end
