@@ -1,0 +1,26 @@
+AllCops:
+  Exclude:
+    - 'db/**/*'
+  TargetRailsVersion: 4.0
+  TargetRubyVersion: 2.2
+
+Rails:
+  Enabled: true
+
+Rails/ApplicationRecord:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 110
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Max: 7
+
+Style/ClassAndModuleChildren:
+  Enabled: false
