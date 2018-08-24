@@ -1,7 +1,7 @@
 class WebhookProviderController < ApplicationController
   def index
-    user = "#{params[:provider]}_service".camelcase.constantize.send(:get_user, params)
-    client = "#{params[:provider]}_service".camelcase.constantize.send(:new, user)
+    user = @provider_class.get_user(params)
+    client = @provider_class.new(user)
 
     body = {}
     client.send_message(text: "hello #{params[:message]['from']['first_name']}", body: body)
