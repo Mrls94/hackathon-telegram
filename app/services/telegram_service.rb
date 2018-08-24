@@ -18,10 +18,21 @@ class TelegramService
   end
 
   def send_message(text: '', body: {})
-    JSON.parse(@conn.get('sendMessage', chat_id: body[:chat_id], text: text).body)
+    JSON.parse(@conn.get('sendMessage', chat_id: chat_id, text: text).body)
   end
 
-  def self.get_user
+  def self.get_user(params)
+    chat_id = params[:message]['chat']['id'].to_s
+    user = User.find_by(
+      "provider_info -> 'telegram' ->> 'chat_id' = ?",
+      chat_id
+    )
+
+    if user.nil?
+      user = User.create(provider_info: { telegram: { chat_id: chat_id } })
+    end
+
+    user
   end
 
   private
@@ -33,5 +44,9 @@ class TelegramService
 
   def base_url
     "https://api.telegram.org/bot#{access_token}/"
+  end
+
+  def chat_id
+    @user.provider_info['telegram']['chat_id']
   end
 end
