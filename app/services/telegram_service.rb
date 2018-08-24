@@ -9,10 +9,6 @@ class TelegramService
     @conn ||= Faraday.new(url: base_url)
   end
 
-  def updates
-    JSON.parse(@conn.get('getUpdates').body)
-  end
-
   def set_up_webhook
     JSON.parse(@conn.get('setWebhook', url: 'https://lamia.serveo.net/webhook_provider/telegram').body)
   end
