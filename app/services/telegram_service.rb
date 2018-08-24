@@ -6,15 +6,15 @@ class TelegramService
 
   class << self
     def client
-      @conn ||= Faraday.new(base_url)
+      @client ||= Faraday.new(base_url)
     end
 
     def base_url
-      "https://api.telegram.org/bot#{Rails.application.secrets.telegram['access_token']}"
+      "https://api.telegram.org/bot#{Rails.application.secrets[:telegram][:access_token]}/"
     end
 
     def webhook_setup(webhook_url)
-      JSON.parse(client.get('/setWebhook', url: webhook_url).body)
+      JSON.parse(client.get('setWebhook', url: webhook_url).body)
     end
 
     def get_user(params)
@@ -27,7 +27,7 @@ class TelegramService
   end
 
   def send_message(text: '', body: {})
-    JSON.parse(@conn.get('sendMessage', chat_id: chat_id, text: text).body)
+    JSON.parse(@client.get('sendMessage', chat_id: chat_id, text: text).body)
   end
 
   def initialize(user)
