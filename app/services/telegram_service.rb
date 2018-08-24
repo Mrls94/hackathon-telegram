@@ -5,8 +5,16 @@ class TelegramService
   attr_accessor :user, :conn
 
   class << self
+    def client
+      @conn ||= Faraday.new(base_url)
+    end
+
+    def base_url
+      "https://api.telegram.org/bot#{Rails.application.secrets.telegram['access_token']}"
+    end
+
     def webhook_setup(webhook_url)
-      JSON.parse(@conn.get('/setWebhook', url: webhook_url).body)
+      JSON.parse(client.get('/setWebhook', url: webhook_url).body)
     end
 
     def get_user(params)
@@ -24,19 +32,10 @@ class TelegramService
 
   def initialize(user)
     @user ||= user
-    @conn ||= Faraday.new(base_url)
+    self.class.client
   end
 
   private
-
-  def access_token
-    ## Should be read from secrets or ENV - Bot Access Token
-    ENV['TELEGRAM_ACCESS_TOKEN']
-  end
-
-  def base_url
-    "https://api.telegram.org/bot#{Rails.application.secrets.telegram['access_token']}"
-  end
 
   def chat_id
     @user.provider_info['telegram']['chat_id']
