@@ -9,9 +9,10 @@ class WebhookProviderController < ApplicationController
     command = message.command
 
     if message.command?
-      client.send_message(text: "Your trying to execute command '#{command.command}' with arguments: #{command.arguments}", body: body)
-    else
-      client.send_message(text: "hello #{params[:message]['from']['first_name']}", body: body)
+      client.send_message(
+        text: "Your trying to execute command '#{command.command}' with arguments: #{command.arguments}",
+        body: body
+      )
     end
 
     head :ok

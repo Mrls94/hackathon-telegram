@@ -12,13 +12,13 @@ class Telegram::BotCommand
   end
 
   def parse_command
-    @full_command = @message_text[(@entity['offset'] + 1)..-1]
+    @full_command = @message_text[0..(@entity['length'] - 1)]
   end
 
   def parse_arguments
     parse_command unless @command
     return @message_text[@command.size, @message_text.size] if @command
-    @full_command
+    @message_text
   end
 
   def arguments
