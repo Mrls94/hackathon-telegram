@@ -4,9 +4,14 @@ class TelegramService
 
   attr_accessor :user, :conn
 
+  def initialize(user)
+    @user ||= user
+    @conn ||= self.class.conn
+  end
+
   class << self
-    def client
-      @client ||= Faraday.new(base_url)
+    def conn
+      @conn ||= Faraday.new(base_url)
     end
 
     def base_url
@@ -14,7 +19,7 @@ class TelegramService
     end
 
     def webhook_setup(webhook_url)
-      JSON.parse(client.get('setWebhook', url: webhook_url).body)
+      JSON.parse(conn.get('setWebhook', url: webhook_url).body)
     end
 
     def get_user(params)
@@ -27,12 +32,7 @@ class TelegramService
   end
 
   def send_message(text: '', body: {})
-    JSON.parse(@client.get('sendMessage', chat_id: chat_id, text: text).body)
-  end
-
-  def initialize(user)
-    @user ||= user
-    self.class.client
+    JSON.parse(@conn.get('sendMessage', chat_id: chat_id, text: text).body)
   end
 
   private
