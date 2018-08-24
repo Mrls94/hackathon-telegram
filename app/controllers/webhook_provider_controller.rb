@@ -9,12 +9,19 @@ class WebhookProviderController < ApplicationController
     command = message.command
 
     if message.command?
-      client.send_message(
-        text: "Your trying to execute command '#{command.command}' with arguments: #{command.arguments}",
-        body: body
-      )
+      if Telegram::Commander.valid_command?(command.command)
+        command.process
+      else
+        client.send_message(
+          text: "Command not found: '#{command.command}'",
+          body: body
+        )
+      end
     end
-
+  rescue StandardError => e
+    puts "Error captured: #{e.message}"
+    puts e.backtrace.first(5).join("\n")
+  ensure
     head :ok
   end
 end

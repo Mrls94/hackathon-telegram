@@ -8,7 +8,7 @@ class Telegram::Commander
     end
 
     def valid_command?(command)
-      @commands.key?(command.to_sym)
+      @commands.key?(command)
     end
 
     def process(telegram_command)

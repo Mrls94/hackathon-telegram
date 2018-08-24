@@ -28,6 +28,10 @@ class Telegram::BotCommand
   end
 
   def command
-    @full_command[1..-1]
+    @full_command[1..-1].try(:to_sym)
+  end
+
+  def process
+    Telegram::Commander.process(self)
   end
 end
