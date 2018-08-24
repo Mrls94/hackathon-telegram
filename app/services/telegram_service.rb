@@ -39,7 +39,7 @@ class TelegramService
 
   def access_token
     ## Should be read from secrets or ENV - Bot Access Token
-    '636172450:AAGBipqKKNeUxgEWSb2CNBrjcwuLzGU6zww'
+    ENV['TELEGRAM_ACCESS_TOKEN']
   end
 
   def base_url
