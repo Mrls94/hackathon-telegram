@@ -23,7 +23,7 @@ class TelegramService
     end
 
     def get_user(params)
-      chat_id = params[:message]['chat']['id'].to_s
+      chat_id = params[:message].present? ? params[:message]['chat']['id'].to_s : params[:edited_message]['chat']['id'].to_s
       user = User.find_by("provider_info -> 'telegram' ->> 'chat_id' = ?", chat_id)
 
       user = User.create(provider_info: { telegram: { chat_id: chat_id } }) if user.nil?
@@ -32,7 +32,7 @@ class TelegramService
   end
 
   def send_message(text: '', body: {})
-    JSON.parse(@conn.get('sendMessage', chat_id: chat_id, text: text).body)
+    JSON.parse(@conn.get('sendMessage', chat_id: chat_id.to_i, text: text).body)
   end
 
   private

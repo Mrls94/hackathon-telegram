@@ -4,7 +4,7 @@ class WebhookProviderController < ApplicationController
     client = @provider_class.new(user)
 
     body = {}
-    client.send_message(text: "hello #{params[:message]['from']['first_name']}", body: body)
+    client.send_message(text: "hello", body: body)
 
     head :ok
   end
