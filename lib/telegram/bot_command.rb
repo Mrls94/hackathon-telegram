@@ -1,7 +1,7 @@
 require 'telegram'
 
 class Telegram::BotCommand
-  attr_reader :full_command
+  attr_reader :full_command, :message_text, :entity
 
   def initialize(message_text, entity)
     @message_text = message_text
@@ -16,9 +16,12 @@ class Telegram::BotCommand
   end
 
   def parse_arguments
-    parse_command unless @command
-    return @message_text[@command.size, @message_text.size] if @command
-    @message_text
+    parse_command unless @full_command
+    if @full_command
+      @arguments = @message_text[(@full_command.size + 1)..-1]
+    else
+      @message_text
+    end
   end
 
   def arguments
@@ -27,7 +30,15 @@ class Telegram::BotCommand
     @arguments.split(' ')
   end
 
+  def args
+    arguments
+  end
+
   def command
-    @full_command[1..-1]
+    @full_command[1..-1].try(:to_sym)
+  end
+
+  def process(client)
+    Telegram::Commander.process(client, self)
   end
 end

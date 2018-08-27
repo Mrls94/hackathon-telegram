@@ -1,3 +1,6 @@
+require 'telegram'
+require 'telegram/bot_command'
+
 class Telegram::Commander
   class << self
     attr_reader :commands
@@ -8,14 +11,14 @@ class Telegram::Commander
     end
 
     def valid_command?(command)
-      @commands.key?(command.to_sym)
+      @commands.key?(command)
     end
 
-    def process(telegram_command)
+    def process(client, telegram_command)
       return false unless telegram_command
       return false unless valid_command?(telegram_command.command)
 
-      @commands[telegram_command.command].yield(telegram_command)
+      @commands[telegram_command.command].yield(client, telegram_command)
     end
   end
 end

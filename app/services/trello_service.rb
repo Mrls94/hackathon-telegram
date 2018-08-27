@@ -1,15 +1,15 @@
 class TrelloService
-  require 'faraday'
-  require 'json'
-
-  attr_accessor :user, :conn
+  attr_accessor :user
 
   def initialize(user)
     @user ||= user
-    @conn ||= Faraday.new(url: base_url)
   end
 
-  def board_info(board_id = 'kxmN1Z4u')
+  def client
+    Faraday.new('https://api.trello.com/1/')
+  end
+
+  def board_info
     JSON.parse(get("boards/#{board_id}").body)
   end
 
@@ -30,16 +30,16 @@ class TrelloService
     end
   end
 
-  def create_list(body)
-    JSON.parse(post("boards/#{board_id}/lists", body).body)
-  end
-
   def lists
     JSON.parse(get("boards/#{board_id}/lists").body)
   end
 
   def create_card(body)
     JSON.parse(post('cards', body).body)
+  end
+
+  def create_list(name)
+    JSON.parse(post("boards/#{board_id}/lists", name: name, pos: 'bottom').body)
   end
 
   private
@@ -57,28 +57,38 @@ class TrelloService
     Rails.application.secrets[:trello][:secret]
   end
 
-  def board_id
-    @user.task_manager_info['trello']['board_id']
-  end
-
-  def base_url
-    "https://api.trello.com/1/"
-  end
-
-  def get(resource, body = {})
-    @conn.get(resource, body.merge(key: api_key, token: token))
-  end
-
-  def post(resource, body = {})
-    @conn.post(resource, body.merge(key: api_key, token: token))
-  end
-
   def token
-    @user.task_manager_info['trello']['token']
+    @user.task_manager_info.dig('trello', 'token')
+  end
+
+  def board_id
+    @user.task_manager_info.dig('trello', 'board_id')
+  end
+
+  def api_key
+    @user.task_manager_info.dig('trello', 'key')
   end
 
   def api_key
     ## Should be read from secrets or ENV - Bot Access Token
     Rails.application.secrets[:trello][:api_key]
+  end
+
+  def get(path, params = {})
+    client.get(path) do |req|
+      req.params[:key] = api_key
+      req.params[:token] = token
+      req.body = params
+      yield(req) if block_given?
+    end
+  end
+
+  def post(path, params = {})
+    client.post(path) do |req|
+      req.params[:key] = api_key
+      req.params[:token] = token
+      req.body = params
+      yield(req) if block_given?
+    end
   end
 end
