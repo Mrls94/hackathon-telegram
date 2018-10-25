@@ -6,6 +6,7 @@ class WebhookProviderController < ApplicationController
   }.freeze
 
   def index
+    RequestHandleWorker.perform_async(params)
     message = PROVIDERS[params[:provider]].constantize::Message.new(params[:message])
     if message.command?
       command = message.command
