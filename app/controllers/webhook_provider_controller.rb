@@ -1,9 +1,13 @@
 require 'telegram/message'
 
 class WebhookProviderController < ApplicationController
-  def index
-    message = Telegram::Message.new(params[:message])
+  PROVIDERS = {
+    'telegram' => 'Telegram'
+  }.freeze
 
+  def index
+    RequestHandleWorker.perform_async(params)
+    message = PROVIDERS[params[:provider]].constantize::Message.new(params[:message])
     if message.command?
       command = message.command
       if Telegram::Commander.valid_command?(command.command)

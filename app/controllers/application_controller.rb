@@ -12,6 +12,10 @@ class ApplicationController < ActionController::Base
     @client ||= @provider_class.new(user)
   end
 
+  def provider_class
+    @provider_class = "#{params[:provider]}_service".camelcase.constantize
+  end
+
   def detect_provider_class
     @provider_class = "#{params[:provider]}_service".camelcase.constantize
   rescue StandardError => _e
