@@ -32,6 +32,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'faraday', '0.15.2'
 gem 'pg'
 gem 'sidekiq'
+gem 'require_all'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
